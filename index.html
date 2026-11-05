@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VCBI — Village Community Banking Initiative</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ====== SIDEBAR ====== -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">🌾</div>
+      <h1>VCBI</h1>
+      <p>Village Banking Initiative</p>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')">
+        <span class="nav-icon">📊</span> Dashboard
+      </a>
+      <a class="nav-item" data-page="members" onclick="navigateTo('members')">
+        <span class="nav-icon">👥</span> Members
+      </a>
+
+      <div class="nav-section-label">Finance</div>
+      <a class="nav-item" data-page="deposits" onclick="navigateTo('deposits')">
+        <span class="nav-icon">💰</span> Deposits
+      </a>
+      <a class="nav-item" data-page="loans" onclick="navigateTo('loans')">
+        <span class="nav-icon">📋</span> Loans
+      </a>
+      <a class="nav-item" data-page="repayments" onclick="navigateTo('repayments')">
+        <span class="nav-icon">↩️</span> Repayments
+      </a>
+
+      <div class="nav-section-label">Mobile Money</div>
+      <a class="nav-item" onclick="window.open('mobilemoney_manual.php','_blank')" style="background:linear-gradient(90deg,rgba(255,204,0,0.12),rgba(228,0,0,0.08));border-left:3px solid #FFCC00;">
+        <span class="nav-icon">📲</span> MTN / Airtel Money
+      </a>
+
+      <div class="nav-section-label">Year-End</div>
+      <a class="nav-item" data-page="reports" onclick="navigateTo('reports')">
+        <span class="nav-icon">📈</span> Reports & Payout
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      Cycle Year: 2026<br>
+      VCBI v1.0
+    </div>
+  </nav>
+
+  <!-- ====== MAIN CONTENT ====== -->
+  <div class="main-content">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="flex-center gap-8">
+        <button class="hamburger" id="hamburger">☰</button>
+        <span class="topbar-title" id="topbarTitle">Dashboard</span>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-badge">Cycle Active ✓</span>
+        <div class="topbar-avatar" title="Admin">AD</div>
+      </div>
+    </header>
+
+    <!-- ======================== -->
+    <!-- PAGE: DASHBOARD          -->
+    <!-- ======================== -->
+    <section class="page active" id="page-dashboard">
+      <div class="page-header">
+        <h2>WELCOME TO THE VILLAGE BANKING 👋</h2>
+        <p>Here is your community banking overview for the current cycle.</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-label">Active Members</div>
+          <div class="stat-value" id="dash-members">—</div>
+          <div class="stat-sub">Registered this cycle</div>
+        </div>
+        <div class="stat-card gold">
+          <div class="stat-icon">💰</div>
+          <div class="stat-label">Total Savings</div>
+          <div class="stat-value" id="dash-savings">—</div>
+          <div class="stat-sub">All deposits pooled</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-icon">📋</div>
+          <div class="stat-label">Active Loans</div>
+          <div class="stat-value" id="dash-loans">—</div>
+          <div class="stat-sub">Currently outstanding</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📈</div>
+          <div class="stat-label">Interest Earned</div>
+          <div class="stat-value" id="dash-interest">—</div>
+          <div class="stat-sub">Added to fund</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <h3>Recent Activity</h3>
+            </div>
+            <div class="card-body" id="activity-feed"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Savings Cycle — 2026</h3>
+            </div>
+            <div class="card-body">
+              <p class="text-muted" style="font-size:.8rem;margin-bottom:10px">Monthly status for current cycle (green = complete, amber = due, gray = upcoming)</p>
+              <div class="cycle-months" id="cycle-months"></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <h3>Top Savers</h3>
+            </div>
+            <div class="card-body" id="top-members"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Quick Actions</h3>
+            </div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+              <button class="btn btn-primary" onclick="navigateTo('members');setTimeout(()=>openModal('memberModal'),100)">
+                👤 Register New Member
+              </button>
+              <button class="btn btn-gold" onclick="navigateTo('deposits');setTimeout(()=>openModal('depositModal'),100)">
+                💰 Record a Deposit
+              </button>
+              <button class="btn btn-secondary" onclick="navigateTo('loans');setTimeout(()=>openModal('loanModal'),100)">
+                📋 Issue a Loan
+              </button>
+              <button class="btn btn-secondary" onclick="navigateTo('repayments');setTimeout(()=>openModal('repaymentModal'),100)">
+                ↩️ Record Repayment
+              </button>
+              <button class="btn btn-secondary" onclick="navigateTo('reports')">
+                📈 View Year-End Report
+              </button>
+              <button onclick="window.open('mobilemoney_manual.php','_blank')"
+                style="display:flex;align-items:center;gap:8px;padding:11px 16px;border-radius:8px;border:2px solid #FFCC00;background:linear-gradient(135deg,rgba(255,204,0,0.12),rgba(228,0,0,0.08));color:#333;font-weight:700;font-size:.88rem;cursor:pointer;width:100%;justify-content:center;">
+                📲 Mobile Money Portal
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== -->
+    <!-- PAGE: MEMBERS            -->
+    <!-- ======================== -->
+    <section class="page" id="page-members">
+      <div class="page-header flex-between">
+        <div>
+          <h2>Members</h2>
+          <p id="members-count">Loading...</p>
+        </div>
+        <button class="btn btn-primary" onclick="openModal('memberModal')">+ Register Member</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Member Registry</h3>
+          <input type="text" placeholder="Search members..." style="width:220px;height:34px;padding:6px 12px;font-size:.85rem"
+            oninput="filterTable(this.id,'members-tbody')" id="member-search">
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Phone</th>
+                <th>Join Date</th>
+                <th>Total Savings</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="members-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== -->
+    <!-- PAGE: DEPOSITS           -->
+    <!-- ======================== -->
+    <section class="page" id="page-deposits">
+      <div class="page-header flex-between">
+        <div>
+          <h2>Deposits</h2>
+          <p id="deposits-total">Loading...</p>
+        </div>
+        <button class="btn btn-primary" onclick="openModal('depositModal')">+ Record Deposit</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Deposit Ledger</h3>
+          <input type="text" placeholder="Search..." style="width:200px;height:34px;padding:6px 12px;font-size:.85rem"
+            oninput="filterTable(this.id,'deposits-tbody')" id="deposit-search">
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Member</th>
+                <th>Amount</th>
+                <th>Month</th>
+                <th>Note</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="deposits-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== -->
+    <!-- PAGE: LOANS              -->
+    <!-- ======================== -->
+    <section class="page" id="page-loans">
+      <div class="page-header flex-between">
+        <div>
+          <h2>Loans</h2>
+          <p id="loans-outstanding">Loading...</p>
+        </div>
+        <button class="btn btn-primary" onclick="openModal('loanModal')">+ Issue Loan</button>
+      </div>
+
+      <div class="alert alert-info">
+        ℹ️ Members must have at least 2 months of deposits to qualify. Maximum loan is 3× their total savings.
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Loan Register</h3>
+          <input type="text" placeholder="Search..." style="width:200px;height:34px;padding:6px 12px;font-size:.85rem"
+            oninput="filterTable(this.id,'loans-tbody')" id="loan-search">
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Loan ID</th>
+                <th>Member</th>
+                <th>Principal</th>
+                <th>Rate</th>
+                <th>Purpose</th>
+                <th>Due Date</th>
+                <th>Progress</th>
+                <th>Status</th>
+                <th>Balance</th>
+              </tr>
+            </thead>
+            <tbody id="loans-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== -->
+    <!-- PAGE: REPAYMENTS         -->
+    <!-- ======================== -->
+    <section class="page" id="page-repayments">
+      <div class="page-header flex-between">
+        <div>
+          <h2>Repayments</h2>
+          <p id="repayments-total">Loading...</p>
+        </div>
+        <button class="btn btn-primary" onclick="openModal('repaymentModal')">+ Record Repayment</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Repayment History</h3>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Member</th>
+                <th>Loan ID</th>
+                <th>Amount Paid</th>
+                <th>Interest Component</th>
+                <th>Note</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="repayments-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== -->
+    <!-- PAGE: REPORTS            -->
+    <!-- ======================== -->
+    <section class="page" id="page-reports">
+      <div class="page-header">
+        <h2>Reports & Year-End Payout</h2>
+        <p>Full financial summary for the current 12-month savings cycle.</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Member Savings</div>
+          <div class="stat-value" id="rep-savings">—</div>
+        </div>
+        <div class="stat-card gold">
+          <div class="stat-label">Loans Disbursed</div>
+          <div class="stat-value" id="rep-disbursed">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Repaid</div>
+          <div class="stat-value" id="rep-repaid">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Interest Earned</div>
+          <div class="stat-value text-green" id="rep-interest">—</div>
+        </div>
+        <div class="stat-card gold">
+          <div class="stat-label">Total Fund (Year-End)</div>
+          <div class="stat-value" id="rep-totalfund">—</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">Active Members</div>
+          <div class="stat-value" id="rep-members">—</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header flex-between">
+          <h3>Year-End Payout Calculator</h3>
+          <span class="badge badge-green">Projected</span>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-warning" style="margin-bottom:16px">
+            ⚠️ Payouts are calculated proportionally. Each member receives their deposits back plus an equal share of interest earned from loans.
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Member</th>
+                  <th>Total Deposits</th>
+                  <th>Interest Share</th>
+                  <th>Total Payout</th>
+                  <th>Return Rate</th>
+                </tr>
+              </thead>
+              <tbody id="payout-tbody"></tbody>
+            </table>
+          </div>
+          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);font-family:var(--font-mono);font-weight:600;color:var(--green-dark)" id="rep-payout-total"></div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /main-content -->
+</div><!-- /app-shell -->
+
+<!-- ======================== -->
+<!-- MODALS                   -->
+<!-- ======================== -->
+
+<!-- Add Member Modal -->
+<div class="modal-overlay" id="memberModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Register New Member</h3>
+      <button class="modal-close" onclick="closeModal('memberModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="addMemberForm">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Full Name *</label>
+            <input type="text" id="m-name" placeholder="e.g. Grace Mutale" />
+          </div>
+          <div class="form-group">
+            <label>National ID / NRC *</label>
+            <input type="text" id="m-id" placeholder="NRC-12345" />
+          </div>
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="tel" id="m-phone" placeholder="0977-000000" />
+          </div>
+          <div class="form-group">
+            <label>Next of Kin</label>
+            <input type="text" id="m-kin" placeholder="Name of next of kin" />
+          </div>
+          <div class="form-group">
+            <label>Join Date</label>
+            <input type="date" id="m-date" />
+          </div>
+          <div class="form-group full">
+            <label>Profile Photo <span style="color:var(--ink-light);font-weight:400">(optional · JPEG/PNG, max 5 MB)</span></label>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
+              <img id="m-photo-preview" src="" alt="Preview" style="display:none;width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--green);" />
+              <label style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--green);color:#fff;border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:600">
+                📷 Choose Photo
+                <input type="file" id="m-photo" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none"
+                  onchange="
+                    const f=this.files[0];
+                    if(f){const r=new FileReader();r.onload=e=>{const p=document.getElementById('m-photo-preview');p.src=e.target.result;p.style.display='block';};r.readAsDataURL(f);}
+                  " />
+              </label>
+              <span id="m-photo-name" style="font-size:.8rem;color:var(--ink-light)">No file chosen</span>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('memberModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addMember()">Register Member</button>
+    </div>
+  </div>
+</div>
+
+<!-- Member Detail Modal -->
+<div class="modal-overlay" id="memberDetailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Member Profile</h3>
+      <button class="modal-close" onclick="closeModal('memberDetailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="member-detail-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('memberDetailModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Deposit Modal -->
+<div class="modal-overlay" id="depositModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Record Monthly Deposit</h3>
+      <button class="modal-close" onclick="closeModal('depositModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="depositForm">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Member *</label>
+            <select id="dep-member"><option value="">Select member...</option></select>
+          </div>
+          <div class="form-group">
+            <label>Amount (ZMW) *</label>
+            <input type="number" id="dep-amount" min="1" step="0.01" placeholder="200.00" />
+          </div>
+          <div class="form-group">
+            <label>Month *</label>
+            <input type="text" id="dep-month" placeholder="e.g. April 2026" />
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="dep-date" />
+          </div>
+          <div class="form-group">
+            <label>Note</label>
+            <input type="text" id="dep-note" placeholder="Optional note" />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('depositModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="recordDeposit()">Record Deposit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Loan Modal -->
+<div class="modal-overlay" id="loanModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Issue a Loan</h3>
+      <button class="modal-close" onclick="closeModal('loanModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="loanForm">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Member *</label>
+            <select id="loan-member" onchange="onLoanMemberChange(this.value)"><option value="">Select member...</option></select>
+          </div>
+          <div class="form-group">
+            <label>Loan Amount (ZMW) *</label>
+            <input type="number" id="loan-amount" min="1" step="0.01" placeholder="500.00" oninput="updateLoanCalc()" />
+          </div>
+          <div class="form-group">
+            <label>Monthly Interest Rate (%) *</label>
+            <input type="number" id="loan-interest" min="1" max="20" step="0.5" value="7" oninput="updateLoanCalc()" />
+          </div>
+          <div class="form-group full">
+            <label>Purpose *</label>
+            <input type="text" id="loan-purpose" placeholder="e.g. School fees, Medical, Farm inputs" />
+          </div>
+          <div class="form-group">
+            <label>Due Date *</label>
+            <input type="date" id="loan-due" oninput="updateLoanCalc()" />
+          </div>
+
+          <!-- ── Mobile Money Disbursement ── -->
+          <div class="form-group full" style="margin-top:4px">
+            <label style="display:flex;align-items:center;gap:6px">
+              📲 Disburse via Mobile Money *
+            </label>
+            <div style="display:flex;align-items:center;border:1px solid var(--green);border-radius:7px;overflow:hidden;background:var(--surface);">
+              <select id="loan-mm-network" onchange="onLoanNetworkChange(this.value)"
+                style="background:var(--surface-2);color:var(--ink);border:none;border-right:1px solid var(--green);
+                       padding:10px 8px;font-size:13px;font-weight:700;cursor:pointer;outline:none;flex-shrink:0;width:auto;max-width:170px;">
+                <option value="">+260 — Network</option>
+                <optgroup label="MTN MoMo">
+                  <option value="MTN MoMo:076">MTN  +260-76</option>
+                  <option value="MTN MoMo:096">MTN  +260-96</option>
+                </optgroup>
+                <optgroup label="Airtel Money">
+                  <option value="Airtel Money:077">Airtel +260-77</option>
+                  <option value="Airtel Money:097">Airtel +260-97</option>
+                  <option value="Airtel Money:057">Airtel +260-57</option>
+                </optgroup>
+              </select>
+              <input type="text" id="loan-mm-digits" maxlength="7" placeholder="0000000"
+                oninput="this.value=this.value.replace(/\D/g,''); buildLoanPhone();"
+                style="background:transparent;border:none;color:var(--ink);padding:10px 10px;
+                       font-family:monospace;font-size:14px;letter-spacing:1px;outline:none;flex:1;min-width:0;" />
+            </div>
+            <input type="hidden" id="loan-mm-phone" value="" />
+            <div id="loan-mm-preview" style="font-size:11px;color:var(--ink-light);margin-top:5px;min-height:16px;"></div>
+          </div>
+
+        </div>
+        <div class="alert alert-info mt-16" id="loan-calc" style="display:block;font-family:var(--font-mono);font-size:.85rem;padding:10px 14px"></div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('loanModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="issueLoan()">💸 Disburse Loan via Mobile Money</button>
+    </div>
+  </div>
+</div>
+
+<!-- Repayment Modal -->
+<div class="modal-overlay" id="repaymentModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Record Loan Repayment</h3>
+      <button class="modal-close" onclick="closeModal('repaymentModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="repaymentForm">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Active Loan *</label>
+            <select id="rep-loan" onchange="onRepLoanChange(this.value)"><option value="">Select loan...</option></select>
+          </div>
+          <!-- Overdue / penalty warning box -->
+          <div id="rep-overdue-box" style="grid-column:1/-1;display:none;padding:12px 16px;border-radius:8px;
+               background:rgba(220,38,38,0.08);border:1px solid #dc2626;margin-bottom:4px">
+            <div style="font-weight:700;color:#dc2626;font-size:.9rem;margin-bottom:4px">⚠️ OVERDUE LOAN</div>
+            <div id="rep-overdue-detail" style="font-size:.82rem;color:#dc2626;font-family:monospace;line-height:1.6"></div>
+          </div>
+          <div id="rep-calc" style="grid-column:1/-1;font-size:.85rem;color:var(--green-dark);font-family:var(--font-mono);padding:6px 0"></div>
+          <div class="form-group">
+            <label>Amount Paid (ZMW) *</label>
+            <input type="number" id="rep-amount" min="1" step="0.01" placeholder="0.00" />
+          </div>
+          <div class="form-group">
+            <label>Payment Date</label>
+            <input type="date" id="rep-date" />
+          </div>
+          <div class="form-group full">
+            <label>Note</label>
+            <input type="text" id="rep-note" placeholder="Optional note" />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('repaymentModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="recordRepayment()">Record Repayment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Member Modal -->
+<div class="modal-overlay" id="editMemberModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>✏️ Edit Member Details</h3>
+      <button class="modal-close" onclick="closeModal('editMemberModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-m-id-hidden" />
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Full Name *</label>
+          <input type="text" id="edit-m-name" placeholder="e.g. Grace Mutale" />
+        </div>
+        <div class="form-group">
+          <label>National ID / NRC *</label>
+          <input type="text" id="edit-m-nrc" placeholder="NRC-12345" />
+        </div>
+        <div class="form-group">
+          <label>Phone Number *</label>
+          <input type="tel" id="edit-m-phone" placeholder="0977-000000" />
+        </div>
+        <div class="form-group">
+          <label>Next of Kin</label>
+          <input type="text" id="edit-m-kin" placeholder="Name of next of kin" />
+        </div>
+        <div class="form-group">
+          <label>Join Date</label>
+          <input type="date" id="edit-m-date" />
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="edit-m-status">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Profile Photo <span style="color:var(--ink-light);font-weight:400">(leave blank to keep current · JPEG/PNG, max 5 MB)</span></label>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
+            <img id="edit-m-photo-preview" src="" alt="Current Photo" style="display:none;width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--green);" />
+            <label style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--green);color:#fff;border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:600">
+              📷 Change Photo
+              <input type="file" id="edit-m-photo" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none"
+                onchange="
+                  const f=this.files[0];
+                  if(f){const r=new FileReader();r.onload=e=>{const p=document.getElementById('edit-m-photo-preview');p.src=e.target.result;p.style.display='block';};r.readAsDataURL(f);}
+                " />
+            </label>
+            <span style="font-size:.8rem;color:var(--ink-light)">No new file chosen</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('editMemberModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="updateMember()">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
